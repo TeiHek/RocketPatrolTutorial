@@ -1,5 +1,3 @@
-const { Phaser } = require("../../lib/phaser");
-
 class Play extends Phaser.Scene {
     constructor() {
       super("playScene");
@@ -33,5 +31,6 @@ class Play extends Phaser.Scene {
 
     update() {
         this.starfield.tilePositionX -= 4;
+        this.p1Rocket.update();
     }
   }
