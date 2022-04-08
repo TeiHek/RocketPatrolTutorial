@@ -29,7 +29,7 @@ class Play extends Phaser.Scene {
     this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
     this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
     // Define keys
-    keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+    keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
     keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -39,8 +39,9 @@ class Play extends Phaser.Scene {
     frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 9, first: 0}),
     frameRate: 30
     });
-    // initialize score
+    // initialize score + time
     this.p1Score = 0;
+    this.timeRemaining = game.settings.gameTimer/1000;  // Time in seconds
     // display score
     let scoreConfig = {
       fontFamily: 'Courier',
@@ -55,9 +56,27 @@ class Play extends Phaser.Scene {
       fixedWidth: 100
     };
     this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+    // Game Timer
+    let TimerConfig = {
+      fontFamily: 'Courier',
+      fontSize: '28px',
+      backgroundColor: '#F3B141',
+      color: '#843605',
+      align: 'center',
+      padding: {
+        top: 5,
+        bottom: 5,
+      },
+      fixedWidth: 50
+    };
+    this.timerUI = this.add.text( game.config.width/2 - borderPadding*2, borderUISize + borderPadding*2, this.timeRemaining, TimerConfig);
+    let timer = this.time.addEvent({ delay: 1000, callback: () => {
+      this.timeRemaining -= 1;
+      this.timerUI.text = this.timeRemaining;
+    }, callbackScope: null, repeat: this.timeRemaining - 1});
     // GAME OVER flag
     this.gameOver = false;
-    // 60-second play clock
+    // Play clock, Time based on settings
     scoreConfig.fixedWidth = 0;
     this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
       this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
